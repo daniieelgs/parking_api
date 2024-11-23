@@ -1,5 +1,5 @@
 services:
-  parking_flask:
+  flask:
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -15,9 +15,8 @@ services:
       - database
     restart: always
 
-  parking_redis:
+  redis:
     image: redis:latest
-    container_name: redis
     environment:
       - TZ=Europe/Madrid
     env_file:
@@ -28,9 +27,8 @@ services:
       - redis-data:/data
     restart: always
 
-  parking_database:
+  database:
     image: mysql:5.7
-    container_name: database
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -44,9 +42,8 @@ services:
       - db-data:/var/lib/mysql
     restart: always
     
-  parking_phpmyadmin:
+  phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
     environment:
       - PMA_ARBITRARY=1
       - MYSQL_HOST=database
