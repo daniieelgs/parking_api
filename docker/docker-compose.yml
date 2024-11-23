@@ -1,5 +1,5 @@
 services:
-  flask:
+  parking_flask:
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -15,7 +15,7 @@ services:
       - database
     restart: always
 
-  redis:
+  parking_redis:
     image: redis:latest
     container_name: redis
     environment:
@@ -28,7 +28,7 @@ services:
       - redis-data:/data
     restart: always
 
-  database:
+  parking_database:
     image: mysql:5.7
     container_name: database
     environment:
@@ -44,7 +44,7 @@ services:
       - db-data:/var/lib/mysql
     restart: always
     
-  phpmyadmin:
+  parking_phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
     environment:
