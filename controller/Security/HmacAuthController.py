@@ -35,7 +35,7 @@ class HmacAuthController(BaseController):
         
         return True
     
-    def read_signature_header(self, headers) -> str:
+    def read_signature_header(self, headers) -> tuple[str, str, str]:
         
         auth_header = headers.get("Authorization")
         if not auth_header:

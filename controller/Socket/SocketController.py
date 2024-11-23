@@ -57,9 +57,7 @@ class SocketController(BaseController):
     def initAllParkings(self):
         self.redisController.remove(PARKING)
         parkings = self.parkingDb.getAll()
-        
-        print("PARKINGS:", parkings, flush=True)
-        
+                
         for parking in parkings:
             self.initParking(parking)
             
@@ -69,7 +67,5 @@ class SocketController(BaseController):
     
     def getAllParkingStatus(self) -> list[ParkingStatus]:
         parkings = self.redisController.get(PARKING)
-        
-        print("PARKINGS:\n", parkings, flush=True)
-        
+                
         return [ParkingStatus(**v) for k, v in parkings.items()] if parkings else []

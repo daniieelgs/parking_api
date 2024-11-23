@@ -8,9 +8,12 @@ from flask_socketio import Namespace, SocketIO, emit, join_room, disconnect, lea
 from redis import Redis
 
 from controller.Database.RedisController import RedisController
+from controller.Security.HmacAuthController import HmacAuthController
 from controller.Socket.SocketController import ParkingStatus, SocketController
 
 ROOM = "GLOBAL_PARKING"
+
+hmac = HmacAuthController()
 
 class SocketMiddleware(Namespace):
     
@@ -33,6 +36,14 @@ class SocketMiddleware(Namespace):
         id = data.get('parkingId')
         sid = request.sid
         self.notifyParkingStatus([self.socketController.getParkingStatus(id)] if id else self.socketController.getAllParkingStatus(), sid)
+        
+    def on_change(self, data):
+        client_id, signature, timestamp = hmac.read_signature_header(data)
+        
+        print('---------------- Change:')
+        print('Client:', client_id)
+        print('Signature:', signature)
+        print('Timestamp:', timestamp)
         
     def notifyParkingStatus(self, parkings:list[ParkingStatus], to=ROOM):        
         data = [parking.to_public_dict() for parking in parkings]
