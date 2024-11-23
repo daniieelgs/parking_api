@@ -66,6 +66,20 @@ class SocketController(BaseController):
         return ParkingStatus(**parkings.get(parking_id)) if parkings else None
     
     def getAllParkingStatus(self) -> list[ParkingStatus]:
+        
+        parkingsApi = self.parkingDb.getAll()
+        parkingsRedis = self.redisController.get(PARKING)
+        parkingIds = []
+        
+        for parking in parkingsApi:
+            if parking.id not in parkingsRedis:
+                self.initParking(parking)
+            parkingIds.append(parking.id)
+            
+        for ids in parkingsRedis:
+            if ids not in parkingIds:
+                self.redisController.removeValues(PARKING, [ids])
+                
         parkings = self.redisController.get(PARKING)
                 
         return [ParkingStatus(**v) for k, v in parkings.items()] if parkings else []
