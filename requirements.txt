@@ -7,3 +7,7 @@ python-dotenv
 flask-socketio
 redis
 eventlet
+flask_sqlalchemy
+sqlalchemy
+flask-migrate
+pymysql

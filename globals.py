@@ -27,6 +27,16 @@ OPENAPI_URL_PREFIX=os.getenv('OPENAPI_URL_PREFIX', DEFAULT_OPENAPI_URL_PREFIX)
 OPENAPI_SWAGGER_UI_URL=os.getenv('OPENAPI_SWAGGER_UI_URL', DEFAULT_OPENAPI_SWAGGER_UI_URL)
 REDIS_URL=os.getenv('REDIS_URL', None)
 
+DB_USER = os.getenv('DB_USER', None)
+DB_PASSWORD = os.getenv('DB_PASSWORD', None)
+DB_HOST = os.getenv('DB_HOST', None)
+DB_PORT = os.getenv('DB_PORT', None)
+DB_NAME = os.getenv('DB_NAME', None)
+
+MYSQL_URI  = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', None)
+
 DEBUG = os.getenv('FLASK_DEBUG', DEFAULT_DEBUG)
 DEBUG = str(DEBUG).lower() in ['true', '1', 't', 'y', 'yes']
 PORT = int(os.getenv('PORT', DEFAULT_PORT))

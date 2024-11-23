@@ -3,20 +3,26 @@ from eventlet import monkey_patch
 
 monkey_patch()
 
+
 import os
 import traceback
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_smorest import abort, Api
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
+
+from controller.Database.DatabaseController import db
 
 from flask_cors import CORS
 
-from globals import DEBUG, API_PREFIX, API_TITLE, API_VERSION, HOST, PORT, SWAGGER_URL, OPENAPI_SWAGGER_UI_URL, OPENAPI_URL_PREFIX, OPENAPI_VERSION, REDIS_URL
+from globals import DEBUG, API_PREFIX, API_TITLE, API_VERSION, HOST, PORT, SWAGGER_URL, OPENAPI_SWAGGER_UI_URL, OPENAPI_URL_PREFIX, OPENAPI_VERSION, REDIS_URL, MYSQL_URI
 
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from resources.socket.SocketMiddleware import SocketMiddleware
+
+from resources.api.parking import blp as ParkingBlp
 
 import redis
 
@@ -36,6 +42,16 @@ def create_app():
     app.config['OPENAPI_SWAGGER_UI_URL'] = OPENAPI_SWAGGER_UI_URL if DEBUG else None
     app.config['REDIS_URL'] = REDIS_URL
     
+    app.config['SQLALCHEMY_DATABASE_URI'] = MYSQL_URI
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
+    
+    Migrate(app, db)
+
     api = Api(app)
     
     api.spec.components.security_scheme(
@@ -48,7 +64,7 @@ def create_app():
     
     redis_client = redis.StrictRedis.from_url(app.config['REDIS_URL'])
     
-    def getApiPrefix(url): return f"/{API_PREFIX}/{url}"
+    def getApiPrefix(url): return f"{API_PREFIX}/{url}"
                 
     ##NotImplementedError
     
@@ -62,6 +78,7 @@ def create_app():
         return jsonify(response), 501
     
     ##Routes
+    api.register_blueprint(ParkingBlp, url_prefix=getApiPrefix('parking'))
         
     socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))
        

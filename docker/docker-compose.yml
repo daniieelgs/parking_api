@@ -12,6 +12,7 @@ services:
       - ..:/app
     depends_on:
       - redis
+      - database
     restart: always
 
   redis:
@@ -27,5 +28,36 @@ services:
       - redis-data:/data
     restart: always
 
+  database:
+    image: mysql:5.7
+    container_name: database
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "${DB_EXPOSE_PORT}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: always
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - MYSQL_HOST=database
+    ports:
+      - "${PHPMYADMIN_EXPOSE_PORT}:80"
+    env_file:
+      - .env
+    depends_on:
+      - database
+    restart: always
+
 volumes:
   redis-data:
+  db-data:
