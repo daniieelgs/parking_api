@@ -13,6 +13,11 @@ services:
     depends_on:
       - redis
       - database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: always
 
   redis:
@@ -25,6 +30,11 @@ services:
       - "${REDIS_EXPOSE_PORT}:6379"
     volumes:
       - redis-data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: always
 
   database:
@@ -40,6 +50,11 @@ services:
       - "${DB_EXPOSE_PORT}:3306"
     volumes:
       - db-data:/var/lib/mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: always
     
   phpmyadmin:
@@ -53,6 +68,11 @@ services:
       - .env
     depends_on:
       - database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: always
 
 volumes:
