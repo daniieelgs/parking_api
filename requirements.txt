@@ -1,0 +1,9 @@
+flask
+flask-cors
+flask-smorest
+flask-jwt-extended
+marshmallow
+python-dotenv
+flask-socketio
+redis
+eventlet

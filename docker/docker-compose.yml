@@ -1,0 +1,31 @@
+services:
+  flask:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - ../.env
+      - .env
+    volumes:
+      - ..:/app
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    environment:
+      - TZ=Europe/Madrid
+    env_file:
+      - .env
+    ports:
+      - "${REDIS_EXPOSE_PORT}:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+
+volumes:
+  redis-data:
