@@ -3,6 +3,7 @@ from redis import Redis
 from controller.BaseController import BaseController
 from controller.Database.DatabaseController import DatabaseController, db
 from controller.Database.RedisController import RedisController
+from errors.socket.ParkingNotFoundException import ParkingNotFoundException
 from models.Parking import ParkingModel
 
 from enum import Enum
@@ -83,3 +84,18 @@ class SocketController(BaseController):
         parkings = self.redisController.get(PARKING)
                 
         return [ParkingStatus(**v) for k, v in parkings.items()] if parkings else []
+    
+    def updateParkingStatus(self, parking_id:str, status:Status, sid = None):
+        parking = self.getParkingStatus(parking_id)
+        if parking is None: raise ParkingNotFoundException()
+        parking.status = status
+        parking.sid = sid
+        self.redisController.addValues(f'{PARKING}', {parking_id: parking.to_dict()})
+        return parking
+        
+    def updateParkingOccupation(self, parking_id:str, occupation:int):
+        parking = self.getParkingStatus(parking_id)
+        if parking is None: raise ParkingNotFoundException()
+        parking.occupation = occupation
+        self.redisController.addValues(f'{PARKING}', {parking_id: parking.to_dict()})
+        return parking

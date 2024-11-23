@@ -45,13 +45,13 @@ class Parking(MethodView):
         try:
         
             parking = database.getById(id)
-            
-            if not parking: abort(404, message=f"Parking '{id}' not found.")
-            
-            return parking
         
         except Exception as e:
             abort(500, message=str(e) if DEBUG else ERROR500)
+                     
+        if not parking: abort(404, message=f"Parking '{id}' not found.")
+        
+        return parking
     
     @blp.arguments(ParkingSchema)
     @blp.response(404, description='Parking not found.')
