@@ -28,7 +28,7 @@ class Parkings(MethodView):
              
         try:
         
-            new_data['url_embed'] = googleMaps.generateUrlCrd(new_data['latitude'], new_data['longitude'], new_data['name'])
+            new_data['url_embed'] = googleMaps.generateUrlCrd(new_data['latitude'], new_data['longitude'])
         
             return database.addAndCommit(**new_data)
         
