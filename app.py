@@ -80,7 +80,8 @@ def create_app():
     ##Routes
     api.register_blueprint(ParkingBlp, url_prefix=getApiPrefix('parking'))
         
-    socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))
+    with app.app_context():
+        socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))
        
     return app, socketio
 

@@ -96,6 +96,8 @@ class DatabaseController(BaseController):
     
     def getById(self, id):
         
+        if not self.existsById(id): return None
+        
         return db.session.query(self.model).get(id)
     
     def getAll(self):

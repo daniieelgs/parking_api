@@ -14,6 +14,8 @@ DEFAULT_DEBUG = False
 DEFAULT_PORT = 5000
 DEFAULT_HOST = "0.0.0.0"
 
+DEFAULT_HMAC_TIME_WINDOW = 300
+
 #------------------------------
 
 load_dotenv()
@@ -37,9 +39,14 @@ MYSQL_URI  = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_N
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', None)
 
+HMAC_SECRET_KEY = os.getenv('HMAC_SECRET_KEY', None)
+HMAC_TIME_WINDOW = int(os.getenv('HMAC_TIME_WINDOW', DEFAULT_HMAC_TIME_WINDOW))
+
 DEBUG = os.getenv('FLASK_DEBUG', DEFAULT_DEBUG)
 DEBUG = str(DEBUG).lower() in ['true', '1', 't', 'y', 'yes']
 PORT = int(os.getenv('PORT', DEFAULT_PORT))
 HOST = os.getenv('HOST', DEFAULT_HOST)
 
 #------------------------------
+
+ERROR500 = 'An error occurred.'
