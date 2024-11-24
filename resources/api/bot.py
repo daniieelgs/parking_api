@@ -35,6 +35,8 @@ class Bot(MethodView):
     @blp.response(200, BotSchema)
     def post(self, data):
         
+        socketController.getAllParkingStatus()
+        
         parkings = databaseParkings.getAll()
             
         context = []
@@ -53,7 +55,7 @@ class Bot(MethodView):
                 hours[history.time.hour]["sum"] += history.occupation
                 hours[history.time.hour]["len"] += 1
                             
-            prediction = [{"hour": f"{i:02}", "occupation": hour["sum"]/hour["len"] if hour["len"] > 0 else 0} for i, hour in enumerate(hours)]
+            prediction = [{"hour": f"{i:02}", "occupation": int(hour["sum"]/hour["len"]) if hour["len"] > 0 else 0} for i, hour in enumerate(hours)]
             
             parkingStatus = socketController.getParkingStatus(parking.id)
             
