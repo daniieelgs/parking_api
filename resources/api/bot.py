@@ -76,8 +76,11 @@ class Bot(MethodView):
             id = model.id
         else:
             model = database.getById(id)
-            history = json.loads(model.history)
-                        
+            if model:
+                history = json.loads(model.history)
+            else:
+                history = []
+                model = database.addAndCommit(create_id = False, id = id, history=json.dumps(history))                        
         def stream_generator():
                         
             for response in botController.query(data['query'], history, context):
