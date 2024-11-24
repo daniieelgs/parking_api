@@ -79,13 +79,10 @@ class Bot(MethodView):
             history = json.loads(model.history)
                         
         def stream_generator():
-            
-            total_response = ""
-            
+                        
             for response in botController.query(data['query'], history, context):
                 if response:
-                    total_response += response
-                    
+                                        
                     data_stream = {"response": response}
                     
                     yield f"data: {json.dumps(data_stream)}\n\n"
@@ -104,7 +101,6 @@ class Bot(MethodView):
             
             data_stream = {
                 "id": id,
-                "response": total_response,
                 "query": data['query']
             }
             
