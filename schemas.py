@@ -31,3 +31,10 @@ class HistorySchema(Schema):
 class HistoryQuerySchema(Schema):
     start = fields.DateTime()
     end = fields.DateTime()
+    
+class StadisticsQuerySchema(Schema):
+    days = fields.Int(default=30)
+    
+class HourStadisticsSchema(Schema):
+    hour = fields.Int()
+    occupation = fields.Int()

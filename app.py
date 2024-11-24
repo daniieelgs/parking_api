@@ -24,6 +24,7 @@ from resources.socket.SocketMiddleware import SocketMiddleware
 
 from resources.api.parking import blp as ParkingBlp
 from resources.api.history import blp as HistoryBlp
+from resources.api.statistics import blp as StatisticsBlp
 
 import redis
 
@@ -81,6 +82,8 @@ def create_app():
     ##Routes
     api.register_blueprint(ParkingBlp, url_prefix=getApiPrefix('parking'))
     api.register_blueprint(HistoryBlp, url_prefix=getApiPrefix('history'))
+    api.register_blueprint(StatisticsBlp, url_prefix=getApiPrefix('statistics'))
+    
         
     with app.app_context():
         socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))
