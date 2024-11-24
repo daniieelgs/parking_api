@@ -1,9 +1,11 @@
 
+from datetime import datetime
 from redis import Redis
 from controller.BaseController import BaseController
 from controller.Database.DatabaseController import DatabaseController, db
 from controller.Database.RedisController import RedisController
 from errors.socket.ParkingNotFoundException import ParkingNotFoundException
+from models.History import HistoryModel
 from models.Parking import ParkingModel
 
 from enum import Enum
@@ -43,10 +45,15 @@ PARKING = 'parking'
 
 class SocketController(BaseController):
     
-    def __init__(self, redis_controller: RedisController, parkingDb: DatabaseController = DatabaseController(ParkingModel)):
+    def __init__(self,
+                redis_controller: RedisController,
+                parkingDb: DatabaseController = DatabaseController(ParkingModel),
+                historyDb: DatabaseController = DatabaseController(HistoryModel)
+                ):
         super().__init__()
         self.redisController = redis_controller
         self.parkingDb = parkingDb
+        self.historyDb = historyDb
         self.initAllParkings()
         
     def _defaultParkingStatus(self, parking) -> ParkingStatus:
@@ -96,6 +103,8 @@ class SocketController(BaseController):
     def updateParkingOccupation(self, parking_id:str, occupation:int):
         parking = self.getParkingStatus(parking_id)
         if parking is None: raise ParkingNotFoundException()
+        access = occupation > parking.occupation
         parking.occupation = occupation
         self.redisController.addValues(f'{PARKING}', {parking_id: parking.to_dict()})
+        self.historyDb.addAndCommit(create_id=False, time=datetime.now(), parking_id=parking_id, access=access, occupation=occupation)
         return parking

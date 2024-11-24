@@ -23,6 +23,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from resources.socket.SocketMiddleware import SocketMiddleware
 
 from resources.api.parking import blp as ParkingBlp
+from resources.api.history import blp as HistoryBlp
 
 import redis
 
@@ -79,6 +80,7 @@ def create_app():
     
     ##Routes
     api.register_blueprint(ParkingBlp, url_prefix=getApiPrefix('parking'))
+    api.register_blueprint(HistoryBlp, url_prefix=getApiPrefix('history'))
         
     with app.app_context():
         socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))

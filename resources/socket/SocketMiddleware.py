@@ -57,7 +57,7 @@ class SocketMiddleware(Namespace):
             parking = self.socketController.updateParkingOccupation(parkingId, occupation)
             self.notifyChangeParking(parking, ROOM)
         except Exception as e:
-            self.emit_error(str(e), sid)
+            self.emit_error(str(e), to=sid)
         
     def on_status_parking(self, data):
         print('---------------- Status Parking:', data)
@@ -86,4 +86,4 @@ class SocketMiddleware(Namespace):
         emit('change_parking', data, room=to)
 
     def emit_error(self, error, to):
-        emit('error', error, to)
+        emit('error', error, to=to)

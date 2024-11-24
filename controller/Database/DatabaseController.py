@@ -59,6 +59,8 @@ class DatabaseController(BaseController):
         
         model = self.model(**self.addDateTimes(**data))
         
+        print("MODEL: ", model)
+        
         db.session.add(model)
         
         db.session.commit()
