@@ -44,18 +44,16 @@ class SocketMiddleware(Namespace):
         self.notifyParkingStatus([self.socketController.getParkingStatus(id)] if id else self.socketController.getAllParkingStatus(), sid)
         
     def on_change_parking(self, data):
-        # client_id, signature, timestamp = hmac.read_signature_header(data)
-        
-        # print('---------------- Change:')
-        # print('Client:', client_id)
-        # print('Signature:', signature)
-        # print('Timestamp:', timestamp)
-        parkingId = data.get('parkingId')
-        occupation = data.get('occupation')
-        
+        parkingId, signature, timestamp = hmac.read_signature_header(data)
+
         sid = request.sid
-        
+
         try:
+            
+            hmac.verify_hmac_signature(parkingId, signature, timestamp, "change_parking")
+            
+            occupation = data.get('occupation')
+                
             parking = self.socketController.updateParkingOccupation(parkingId, occupation)
             self.notifyChangeParking(parking, ROOM)
         except Exception as e:
@@ -63,10 +61,17 @@ class SocketMiddleware(Namespace):
         
     def on_status_parking(self, data):
         print('---------------- Status Parking:', data)
-        parkingId = data.get('parkingId')
-        status = data.get('status')
+        
+        parkingId, signature, timestamp = hmac.read_signature_header(data)
+
         sid = request.sid
+
         try:
+            
+            hmac.verify_hmac_signature(parkingId, signature, timestamp, "status_parking")
+        
+            status = data.get('status')
+            
             parking = self.socketController.updateParkingStatus(parkingId, status, sid)
             self.notifyChangeParking(parking, ROOM)
         except Exception as e:
