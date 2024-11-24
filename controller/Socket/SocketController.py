@@ -71,7 +71,9 @@ class SocketController(BaseController):
             
     def getParkingStatus(self, parking_id:str) -> ParkingStatus:
         parkings = self.redisController.get(PARKING)
-        return ParkingStatus(**parkings.get(parking_id)) if parkings else None
+        if not parkings: return None
+        parking = parkings.get(parking_id)
+        return ParkingStatus(**parking) if parking else None
     
     def getAllParkingStatus(self) -> list[ParkingStatus]:
         
