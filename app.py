@@ -84,8 +84,9 @@ def create_app():
     api.register_blueprint(HistoryBlp, url_prefix=getApiPrefix('history'))
     api.register_blueprint(StatisticsBlp, url_prefix=getApiPrefix('statistics'))
     
-        
     with app.app_context():
+        from resources.api.bot import blp as BotBlp
+        api.register_blueprint(BotBlp, url_prefix=getApiPrefix('bot'))
         socketio.on_namespace(SocketMiddleware(redis_client, socketio, namespace='/socket'))
        
     return app, socketio

@@ -47,6 +47,9 @@ DEBUG = str(DEBUG).lower() in ['true', '1', 't', 'y', 'yes']
 PORT = int(os.getenv('PORT', DEFAULT_PORT))
 HOST = os.getenv('HOST', DEFAULT_HOST)
 
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', None)
+MODEL_OPENAI = os.getenv('MODEL_OPENAI', None)
+
 #------------------------------
 
 ERROR500 = 'An error occurred.'

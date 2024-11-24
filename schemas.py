@@ -38,3 +38,8 @@ class StadisticsQuerySchema(Schema):
 class HourStadisticsSchema(Schema):
     hour = fields.Int()
     occupation = fields.Int()
+    
+class BotSchema(Schema):
+    id = fields.Str()
+    query = fields.Str(required=True)
+    response = fields.Str()

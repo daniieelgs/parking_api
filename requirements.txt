@@ -11,3 +11,6 @@ flask_sqlalchemy
 sqlalchemy
 flask-migrate
 pymysql
+langchain
+langchain-community
+langchain-openai
