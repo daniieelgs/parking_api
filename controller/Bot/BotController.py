@@ -34,6 +34,7 @@ está abierto o cerrado:
             }
         ]
         
-        return self.client.chat.completions.create(messages=messages, model=MODEL_OPENAI, temperature=0.7).choices[0].message.content        
-                
+        for chunk in self.client.chat.completions.create(messages=messages, model=MODEL_OPENAI, temperature=0.7, stream = True):    
+            if chunk.choices:
+                yield chunk.choices[0].delta.content
         

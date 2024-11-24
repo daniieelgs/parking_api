@@ -1,6 +1,7 @@
 
 from datetime import datetime, timedelta
 import json
+from flask import Response, stream_with_context
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 import redis
@@ -76,24 +77,37 @@ class Bot(MethodView):
         else:
             model = database.getById(id)
             history = json.loads(model.history)
+                        
+        def stream_generator():
             
-        response = botController.query(data['query'], history, context)
-        
-        history.append({
-            "role": "user",
-            "content": data['query']
-        })
-        
-        history.append({
-            "role": "assistant",
-            "content": response
-        })
+            total_response = ""
+            
+            for response in botController.query(data['query'], history, context):
+                if response:
+                    total_response += response
                     
-        database.updateAndCommit(id = id, history = json.dumps(history))
-        
-        return {
-            "id": id,
-            "response": response,
-            "query": data['query']
-        }
+                    data_stream = {"response": response}
+                    
+                    yield f"data: {json.dumps(data_stream)}\n\n"
+                    
+            history.append({
+                "role": "user",
+                "content": data['query']
+            })
             
+            history.append({
+                "role": "assistant",
+                "content": response
+            })
+                        
+            database.updateAndCommit(id = id, history = json.dumps(history))
+            
+            data_stream = {
+                "id": id,
+                "response": total_response,
+                "query": data['query']
+            }
+            
+            yield f"data: {json.dumps(data_stream)}\n\n"
+            
+        return Response(stream_with_context(stream_generator()), mimetype='text/event-stream')
