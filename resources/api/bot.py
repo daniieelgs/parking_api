@@ -81,10 +81,15 @@ class Bot(MethodView):
             else:
                 history = []
                 model = database.addAndCommit(create_id = False, id = id, history=json.dumps(history))                        
+
         def stream_generator():
+                        
+            total_response = ""
                         
             for response in botController.query(data['query'], history, context):
                 if response:
+                         
+                    total_response += response
                                         
                     data_stream = {"response": response}
                     
@@ -97,7 +102,7 @@ class Bot(MethodView):
             
             history.append({
                 "role": "assistant",
-                "content": response
+                "content": total_response
             })
                         
             database.updateAndCommit(id = id, history = json.dumps(history))
